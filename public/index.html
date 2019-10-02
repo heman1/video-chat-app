@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Web sockets</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <!-- for offline support <script src="./clientSocket.js"></script> -->
+    <link href="./style.css" rel="stylesheet"/>
+</head>
+<body onload="getName();">
+
+<div class="chat-app">
+    <div class="side-panel">
+        <div id="user-details">
+            <div id="user-profile">
+                <img src="./images/default_profile.jpg">
+            </div>
+            <p id="user-name"></p>
+        </div>
+        <div id="peer-details">
+            <ul>
+                <li>Open Server</li>
+                <li>Alice (demo)</li>
+                <li>Bob (demo)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="chat-window">
+
+        <div class="header">
+            <div class="status">
+                <p id="friend-name">Open Server</p>
+                <p id="status"></p>
+            </div>
+            <div class="controls">
+                <img src="images/video_icon.png" alt="video call" title="video call">
+            </div>
+        </div>
+
+        <div id="paint">
+
+        </div>
+        <div class="message-box">
+            <input id="message" type="text" placeholder="your message">
+            <div class="btn" id="send">Send</div>
+        </div>
+
+    </div>
+</div>
+    <script src="/chat.js"></script>
+</body>
+</html>
