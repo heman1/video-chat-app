@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/heman1/chatApp#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.1",
     "express": "^4.16.4",
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",
