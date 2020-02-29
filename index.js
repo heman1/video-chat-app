@@ -5,103 +5,84 @@ const jwt = require('jsonwebtoken');
 //app setup
 var app = express();
 
-
 //static files
 app.use(express.static('public'));
 var server = app.listen(4001, function() {
-  console.log("server listening at port 4001");
+	console.log('server listening at port 4001');
 });
 //socket.io setup
 var io = socket(server);
 //check when a client is connected to the socket
 io.on('connection', function(socket) {
-    console.log("socket connected");
+	console.log('socket connected');
 
-    //listen for the message
-    socket.on('chat', function(data) {
-        //now give the data to all socket(s)
-        //io.sockets.emit('chat',data);
-        socket.broadcast.emit('chat', data);
-    });
+	//listen for the message
+	socket.on('chat', function(data) {
+		//now give the data to all socket(s)
+		//io.sockets.emit('chat',data);
+		socket.broadcast.emit('chat', data);
+	});
 
-    //listen for typing 
-    socket.on('typing', function(data) {
-        //now broadcast the data to all socket(s)
-        socket.broadcast.emit('typing', data);
-        //In broadcast the data is given to all the other sockets excluding own socket.
-    });
+	//listen for typing
+	socket.on('typing', function(data) {
+		//now broadcast the data to all socket(s)
+		socket.broadcast.emit('typing', data);
+		//In broadcast the data is given to all the other sockets excluding own socket.
+	});
 });
-
 
 //JSON web token (ongoing for authentication)
-app.get('/api', (req, res)=> {
-  res.json( {msg: 'The get route is working..'} );
+app.get('/api', (req, res) => {
+	res.json({ msg: 'The get route is working..' });
 });
 
+app.post('/api/authWork', verifyToken, (req, res) => {
+	jwt.verify(req.token, 'secretkey', (err, authData) => {
+		if (err) {
+			res.sendStatus(403);
+		} else {
+			res.json({
+				msg: 'you are an authorized user',
+				authData
+			});
+		}
+	});
+});
 
-app.post('/api/authWork', verifyToken, (req, res)=> {
-  jwt.verify(req.token, 'secretkey', (err, authData)=> {
-    if(err) {
-      res.sendStatus(403);
-    } else {
-      res.json( 
-        { msg: 'you are an authorized user',
-          authData
-        });
-    }
-  })
-})
+app.post('/api/login', verifyToken, (req, res) => {
+	//test user
+	const user = {
+		id: 1,
+		username: 'himanshu',
+		email: 'emailhaimera@gmal.com'
+	};
 
-app.post('/api/login', verifyToken, (req, res)=> {
-  //test user
-  const user = {
-    id: 1,
-    username: 'himanshu',
-    email: 'emailhaimera@gmal.com'
-  }
-
-  jwt.sign( {user: user}, 'secretkey',{ expiresIn: '600s'}, (err, token)=> {
-    res.json(  {token} );
-  });
-
+	jwt.sign({ user: user }, 'secretkey', { expiresIn: '600s' }, (err, token) => {
+		res.json({ token });
+	});
 });
 
 //verify toke
 function verifyToken(req, res, next) {
-  //get the auth header value
-  const bearerHeader = req.headers['authorization'];
-  //check if bearer is undifines
-  if(typeof bearerHeader !==  undefined) {
-    // split at the space as the access toke is after a space
-    const bearer = bearerHeader.split(' ');
-    //get toke from the array bearer
-    const bearerToken = bearer[1];
-    // set the token
-    req.token = bearerToken;
- 
-    next();
+	//get the auth header value
+	const bearerHeader = req.headers['authorization'];
+	//check if bearer is undifines
+	if (typeof bearerHeader !== undefined) {
+		// split at the space as the access toke is after a space
+		const bearer = bearerHeader.split(' ');
+		//get toke from the array bearer
+		const bearerToken = bearer[1];
+		// set the token
+		req.token = bearerToken;
 
-  } else {
-    //forbidden
-    res.sendStatus(403);
-  }
+		next();
+	} else {
+		//forbidden
+		res.sendStatus(403);
+	}
 }
 
 //To DO: COmplete the authentication process [Firebase oAuth or passport.js]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*using webRTC
 var getUserMedia = require('getusermedia');
@@ -146,4 +127,7 @@ getUserMedia({ video: true, audio: true }, function (err, stream) {
 })
 */
 
-
+// running app on local host
+app.listen(3000, function(req, res) {
+	console.log('Server started successfully.....');
+});
