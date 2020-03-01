@@ -4,42 +4,41 @@ const jwt = require('jsonwebtoken');
 
 //app setup
 var app = express();
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
-var passport = require("passport");
-var LocalStrategy = require("passport-local");
-var passportLocalMongoose = require("passport-local-mongoose");
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var LocalStrategy = require('passport-local');
+var passportLocalMongoose = require('passport-local-mongoose');
 
 // user-model
-var User = require("./models/user-model");
+var User = require('./models/user-model');
 
-// connect to mongoDB database 
-mongoose.connect("mongodb://localhost:27017/video-chat",{useNewUrlParser:true, useUnifiedTopology:true});
+// connect to mongoDB database
+mongoose.connect('mongodb://localhost:27017/video-chat', { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(express.static(__dirname+"/public"));
-app.set("view engine","ejs");
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(express.static(__dirname + '/public'));
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
-  require("express-session")({
-    secret: "video chat app",
-    resave: false,
-    saveUninitialized: false
-  })
+	require('express-session')({
+		secret: 'video chat app',
+		resave: false,
+		saveUninitialized: false
+	})
 );
 
-
-// initializing passport 
+// initializing passport
 app.use(passport.initialize());
 app.use(passport.session());
-// serialize and deserialize data from the session using the methods provided by passport 
+// serialize and deserialize data from the session using the methods provided by passport
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// put the loggedIn user info inside res.locals, so that it can be used by all the routes 
-app.use(function(req,res,next){
-  res.locals.currentUser = req.user;
-  next();
+// put the loggedIn user info inside res.locals, so that it can be used by all the routes
+app.use(function(req, res, next) {
+	res.locals.currentUser = req.user;
+	next();
 });
 
 //static files
@@ -48,9 +47,9 @@ app.use(function(req,res,next){
 // 	console.log('server listening at port 4001');
 // });
 
-var server = app.listen(3000,function(req,res){
-  console.log("Server Started Successfully......");
-}); 
+var server = app.listen(3000, function(req, res) {
+	console.log('Server Started Successfully......');
+});
 
 //socket.io setup
 var io = socket(server);
@@ -125,6 +124,71 @@ function verifyToken(req, res, next) {
 }
 
 //To DO: COmplete the authentication process [Firebase oAuth or passport.js]
+
+// Authentication Routes
+
+app.get('/', function(req, res) {
+	res.render('index');
+});
+// LOGIN - GET
+app.get('/login', function(req, res) {
+	// render login form when invoked
+	res.render('login-form');
+});
+
+// LOGIN - POST
+app.post(
+	'/login',
+	passport.authenticate('local', {
+		successRedirect: '/',
+		failureRedirect: '/login'
+	}),
+	function(req, res) {
+		// check user credentials and log him in
+	}
+);
+
+// REGISTER - GET
+app.get('/register', function(req, res) {
+	// render register form when invoked
+	res.render('register-form');
+});
+
+// REGISTER - POST
+app.post('/register', function(req, res) {
+	// insert user info to DB and log in the user
+	User.register(
+		new User({
+			username: req.body.username
+		}),
+		req.body.password,
+		function(err, savedUser) {
+			// callback function after user is registered
+			if (err) {
+				console.log(err);
+				return res.redirect('/register');
+			}
+			passport.authenticate('local')(req, res, function() {
+				res.redirect('/');
+			});
+		}
+	);
+});
+
+// LOGOUT - GET
+app.get('/logout', function(req, res) {
+	// logout the current user
+	req.logout();
+	res.redirect('/');
+});
+
+// isLoggedIn - middleware to check if user is logged in or not
+function isLoggedIn(req, res, next) {
+	if (req.isAuthenticated()) {
+		return next();
+	}
+	res.redirect('/');
+}
 
 /*using webRTC
 var getUserMedia = require('getusermedia');

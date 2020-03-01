@@ -17,13 +17,29 @@
             <div id="user-profile">
                 <img src="./images/default_profile.jpg">
             </div>
-            <p id="user-name"></p>
+            <p id="user-name">
+                <% if(currentUser) { %>
+                    <%= currentUser.username %>
+                <% } else { %>
+                    Login First
+                <% } %>
+            </p>
         </div>
         <div id="peer-details">
             <ul>
                 <li>Open Server</li>
                 <li>Alice (demo)</li>
                 <li>Bob (demo)</li>
+            </ul>
+        </div>
+        <div id="login-register">
+            <ul>
+                <% if(!currentUser) { %>
+                    <a href="/login" class="auth-buttons"><li>Login</li></a>
+                    <a href="/register" class="auth-buttons"><li>SignUp</li></a>
+                <% } else { %>
+                    <a href="/logout" class="auth-buttons"><li>Logout</li></a>
+                <% } %> 
             </ul>
         </div>
     </div>

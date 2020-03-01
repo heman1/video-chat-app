@@ -74,6 +74,30 @@
 	cursor: pointer;
 }
 
+#login-register {
+	width: 100%;
+	box-sizing: border-box;
+	align-self: flex-;
+}
+
+#login-register ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+#login-register li {
+	background: white;
+	padding: 20px;
+	border-top: 0.1px solid rgb(219, 219, 219);
+	transition: 0.2s ease-in;
+}
+
+#login-register li:hover {
+	background: rgb(206, 206, 206);
+	cursor: pointer;
+}
+
 .chat-window {
 	flex: 70%;
 	overflow-y: auto;
@@ -107,6 +131,11 @@
 	display: inline-block;
 	margin: 10px 15px;
 	z-index: 2;
+}
+
+.auth-buttons {
+	text-decoration: none;
+	color: black;
 }
 
 #friend-name {
